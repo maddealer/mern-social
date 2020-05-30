@@ -1,5 +1,6 @@
 import React from "react";
 import { Link, withRouter } from "react-router-dom";
+import { isAuthenticated, signout } from "./../auth/index";
 
 const isActive = (history, path) => {
   if (history.location.pathname === path) {
@@ -7,20 +8,6 @@ const isActive = (history, path) => {
   } else {
     return { color: "#ffffff" };
   }
-};
-
-export const signout = (next) => {
-  if (typeof window !== "undefined") {
-    localStorage.removeItem("jwt");
-  }
-  next();
-  return fetch("http://localhost:8080/signout", {
-    method: "GET",
-  })
-    .then((response) => {
-      console.log("signout", response);
-    })
-    .catch((err) => console.log(err));
 };
 
 const Menu = ({ history }) => {
@@ -32,41 +19,56 @@ const Menu = ({ history }) => {
             Home
           </Link>
         </li>
-        <li className="nav-item">
-          <Link
-            to="/signin"
-            className="nav-link"
-            style={isActive(history, "/signin")}
-          >
-            Sign In
-          </Link>
-        </li>
 
-        <li className="nav-item ">
-          <Link
-            to="/signup"
-            className="nav-link"
-            style={isActive(history, "/signup")}
-          >
-            Sign Up
-          </Link>
-        </li>
-        <li className="nav-item ">
-          <a
-            className="nav-link"
-            style={
-              (isActive(history, "/signup"),
-              { cursor: "pointer", color: "#fff" })
-            }
-            onClick={() => {
-              signout(() => {
-                history.push("/");
-              });
-            }}
-          >
-            Sign Out
-          </a>
-        </li>
+        {!isAuthenticated() && (
+          <>
+            <li className="nav-item">
+              <Link
+                to="/signin"
+                className="nav-link"
+                style={isActive(history, "/signin")}
+              >
+                Sign In
+              </Link>
+            </li>
+
+            <li className="nav-item ">
+              <Link
+                to="/signup"
+                className="nav-link"
+                style={isActive(history, "/signup")}
+              >
+                Sign Up
+              </Link>
+            </li>
+          </>
+        )}
+
+        {isAuthenticated() && (
+          <>
+            <li className="nav-item ">
+              <a
+                className="nav-link"
+                style={
+                  (isActive(history, "/signup"),
+                  { cursor: "pointer", color: "#fff" })
+                }
+                onClick={() => {
+                  signout(() => {
+                    history.push("/");
+                  });
+                }}
+              >
+                Sign Out
+              </a>
+            </li>
+            <li className="nav-item ">
+              <a className="nav-link">{`${
+                isAuthenticated().user.name
+              }'s profile`}</a>
+            </li>
+          </>
+        )}
       </ul>
     </div>
   );

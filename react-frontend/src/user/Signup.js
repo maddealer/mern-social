@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { signup } from "./../auth/index";
 
 class Signup extends Component {
   constructor() {
@@ -28,7 +29,7 @@ class Signup extends Component {
       password,
     };
     //console.log(user);
-    this.signup(user).then((data) => {
+    signup(user).then((data) => {
       if (data.error) {
         this.setState({ error: data.error });
       } else {
@@ -41,24 +42,6 @@ class Signup extends Component {
         });
       }
     });
-  };
-
-  signup = (user) => {
-    return fetch("http://localhost:8080/signup", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(user),
-    })
-      .then((response) => {
-        console.log(response);
-        return response.json();
-      })
-      .catch((err) => {
-        console.log(err);
-      });
   };
 
   signupForm = (name, email, password) => {

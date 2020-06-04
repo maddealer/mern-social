@@ -33,6 +33,18 @@ class Profile extends Component {
     this.init(userId);
   }
 
+  componentDidUpdate(prevProps) {
+    const userId = this.props.match.params.userId;
+
+    //console.log("Prevprops", prevProps.match.params.userId);
+    //console.log("Cuurent id", this.props.match.params.userId);
+    //if both ids not same then fetch data again
+    if (this.props.match.params.userId !== prevProps.match.params.userId) {
+      this.init(userId);
+    }
+  }
+  // componentDidUpdate(prevProps) {}
+
   render() {
     const { redirectToSignin, user } = this.state;
     if (redirectToSignin) {
@@ -58,7 +70,7 @@ class Profile extends Component {
               <p>Email: {user.email}</p>
               <p>{`Joined ${new Date(user.created).toDateString()}`}</p>
             </div>
-            {isAuthenticated().user && isAuthenticated().user._id == user._id && (
+            {isAuthenticated().user && isAuthenticated().user._id === user._id && (
               <div className="d-inline-block">
                 <Link
                   className="btn btn-raised btn-success mr-5"
@@ -66,7 +78,7 @@ class Profile extends Component {
                 >
                   Edit Profile
                 </Link>
-                <DeleteUser></DeleteUser>
+                <DeleteUser userId={user._id} />
               </div>
             )}
           </div>

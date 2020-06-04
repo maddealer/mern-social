@@ -23,7 +23,7 @@ class Signup extends Component {
 
   clickSubmit = (e) => {
     e.preventDefault();
-    const { name, email, password, open } = this.state;
+    const { name, email, password } = this.state;
     const user = {
       name,
       email,

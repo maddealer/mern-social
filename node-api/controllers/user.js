@@ -45,7 +45,7 @@ const updateUser = (req, res, next) => {
     if (err) {
       return res
         .status(400)
-        .json({ error: "Yuo are not authorized to perform this action" });
+        .json({ error: "You are not authorized to perform this action" });
     }
     user.hashed_password = undefined;
     user.salt = undefined;

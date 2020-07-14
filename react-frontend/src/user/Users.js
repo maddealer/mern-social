@@ -28,10 +28,12 @@ class Users extends Component {
         return (
           <div className="card col-md-4" key={i}>
             <img
-              className="card-img-top"
-              src={DefaultAvatar}
+              src={`${process.env.REACT_APP_API_URL}/user/photo/${user._id}`}
+              onError={(i) => (i.target.src = `${DefaultAvatar}`)}
               alt={user.name}
-              style={{ width: "100%", height: "15vw", objectFit: "cover" }}
+              className="rounded-circle z-depth-2 mx-auto d-block"
+              width="200px"
+              height="200px"
             />
             <div className="card-body">
               <h5 className="card-title">{user.name}</h5>

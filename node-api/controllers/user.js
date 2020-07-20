@@ -6,15 +6,18 @@ const _ = require("lodash");
 const User = require("../models/User");
 
 const userById = (req, res, next, id) => {
-  User.findById(id).exec((err, user) => {
-    if (err || !user) {
-      return res.status(400).json({ error: "User not found!" });
-    }
+  User.findById(id)
+    .populate("following", "_id name")
+    .populate("followers", "_id name")
+    .exec((err, user) => {
+      if (err || !user) {
+        return res.status(400).json({ error: "User not found!" });
+      }
 
-    req.profile = user; // has profile obj in req with user info
+      req.profile = user; // has profile obj in req with user info
 
-    next();
-  });
+      next();
+    });
 };
 
 const hasAuthorization = (req, res, next) => {
@@ -111,6 +114,73 @@ const deleteUser = (req, res) => {
   });
 };
 
+//follow unfollow
+const addFollowing = (req, res, next) => {
+  User.findByIdAndUpdate(
+    req.body.userId,
+    { $push: { following: req.body.followId } },
+    (err, result) => {
+      if (err) {
+        res.status(400).json({ error: err });
+      }
+
+      next();
+    }
+  );
+};
+
+const addFollower = (req, res) => {
+  User.findByIdAndUpdate(
+    req.body.followId,
+    { $push: { followers: req.body.userId } },
+    { new: true }
+  )
+    .populate("following", "_id name")
+    .populate("folowers", "_id name")
+    .exec((err, result) => {
+      if (err) {
+        res.status(400).json({ error: err });
+      }
+
+      result.hashed_password = undefined;
+      result.salt = undefined;
+      res.json(result);
+    });
+};
+
+const removeFollowing = (req, res, next) => {
+  User.findByIdAndUpdate(
+    req.body.userId,
+    { $push: { following: req.body.followId } },
+    (err, result) => {
+      if (err) {
+        res.status(400).json({ error: err });
+      }
+
+      next();
+    }
+  );
+};
+
+const removeFollower = (req, res) => {
+  User.findByIdAndUpdate(
+    req.body.followId,
+    { $push: { followers: req.body.userId } },
+    { new: true }
+  )
+    .populate("following", "_id name")
+    .populate("folowers", "_id name")
+    .exec((err, result) => {
+      if (err) {
+        res.status(400).json({ error: err });
+      }
+
+      result.hashed_password = undefined;
+      result.salt = undefined;
+      res.json(result);
+    });
+};
+
 module.exports = {
   userById,
   hasAuthorization,
@@ -119,4 +189,8 @@ module.exports = {
   updateUser,
   deleteUser,
   userPhoto,
+  addFollowing,
+  addFollower,
+  removeFollowing,
+  removeFollower,
 };

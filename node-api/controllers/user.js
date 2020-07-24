@@ -151,7 +151,7 @@ const addFollower = (req, res) => {
 const removeFollowing = (req, res, next) => {
   User.findByIdAndUpdate(
     req.body.userId,
-    { $push: { following: req.body.followId } },
+    { $pull: { following: req.body.unfollowId } },
     (err, result) => {
       if (err) {
         res.status(400).json({ error: err });
@@ -164,8 +164,8 @@ const removeFollowing = (req, res, next) => {
 
 const removeFollower = (req, res) => {
   User.findByIdAndUpdate(
-    req.body.followId,
-    { $push: { followers: req.body.userId } },
+    req.body.unfollowId,
+    { $pull: { followers: req.body.userId } },
     { new: true }
   )
     .populate("following", "_id name")

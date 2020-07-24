@@ -11,10 +11,33 @@ class Profile extends Component {
     super(props);
 
     this.state = {
-      user: "",
+      user: { following: [], followers: [] },
       redirectToSignin: false,
+      following: false,
+      error: "",
     };
   }
+
+  checkFollow = (user) => {
+    const jwt = isAuthenticated();
+    const match = user.followers.find((follower) => {
+      return follower._id === jwt.user._id;
+    });
+    return match;
+  };
+
+  clickFollowbutton = (callApi) => {
+    const userId = isAuthenticated().user._id;
+    const token = isAuthenticated().token;
+
+    callApi(userId, token, this.state.user._id).then((data) => {
+      if (data.error) {
+        this.setState({ error: data.error });
+      } else {
+        this.setState({ user: data, following: !this.state.following });
+      }
+    });
+  };
 
   init = (userId) => {
     const token = isAuthenticated().token;
@@ -22,8 +45,10 @@ class Profile extends Component {
       if (data.error) {
         this.setState({ redirectToSignin: true });
       } else {
+        let following = this.checkFollow(data);
         this.setState({
           user: data,
+          following: following,
         });
       }
     });
@@ -89,7 +114,10 @@ class Profile extends Component {
                 <DeleteUser userId={user._id} />
               </div>
             ) : (
-              <FollowProfileButton />
+              <FollowProfileButton
+                following={this.state.following}
+                onButtonClick={this.clickFollowbutton}
+              />
             )}
           </div>
         </div>

@@ -5,6 +5,7 @@ import { read } from "./apiUser";
 import DefaultAvatar from "../images/avatar.png";
 import DeleteUser from "./DeleteUser";
 import FollowProfileButton from "./FollowProfileButton";
+import ProfileTabs from "./ProfileTabs";
 
 class Profile extends Component {
   constructor(props) {
@@ -73,6 +74,7 @@ class Profile extends Component {
 
   render() {
     const { redirectToSignin, user } = this.state;
+    console.log("user v state Profileuser: ", user);
     if (redirectToSignin) {
       return <Redirect to="/signin" />;
     }
@@ -126,6 +128,10 @@ class Profile extends Component {
             <hr />
             <p className="lead">{user.about}</p>
             <hr />
+            <ProfileTabs
+              followers={user.followers}
+              following={user.following}
+            />
           </div>
         </div>
       </div>

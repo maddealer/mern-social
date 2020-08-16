@@ -97,8 +97,8 @@ const userPhoto = (req, res, next) => {
   console.log(req.profile.photo.data);
   if (req.profile.photo.data) {
     res.set("Content-Type", req.profile.photo.contentType);
-    console.log("tuk sam");
-    console.log(req.profile.photo.data);
+    //console.log("tuk sam");
+    //console.log(req.profile.photo.data);
     return res.send(req.profile.photo.data);
   }
   next();
@@ -136,7 +136,8 @@ const addFollower = (req, res) => {
     { new: true }
   )
     .populate("following", "_id name")
-    .populate("folowers", "_id name")
+    .populate("followers", "_id name")
+    .populate("postedBy")
     .exec((err, result) => {
       if (err) {
         res.status(400).json({ error: err });
@@ -144,6 +145,7 @@ const addFollower = (req, res) => {
 
       result.hashed_password = undefined;
       result.salt = undefined;
+      console.log("result: ", result);
       res.json(result);
     });
 };
@@ -170,6 +172,7 @@ const removeFollower = (req, res) => {
   )
     .populate("following", "_id name")
     .populate("folowers", "_id name")
+    .populate("postedBy")
     .exec((err, result) => {
       if (err) {
         res.status(400).json({ error: err });
@@ -177,8 +180,21 @@ const removeFollower = (req, res) => {
 
       result.hashed_password = undefined;
       result.salt = undefined;
+      //console.log("result: ", result);
       res.json(result);
     });
+};
+
+const findPeople = (req, res) => {
+  let following = req.profile.following;
+  following.push(req.profile._id);
+
+  User.find({ _id: { $nin: following } }, (err, users) => {
+    if (err) {
+      return res.status(400).json({ error: err });
+    }
+    res.json(users);
+  }).select("name");
 };
 
 module.exports = {
@@ -193,4 +209,5 @@ module.exports = {
   addFollower,
   removeFollowing,
   removeFollower,
+  findPeople,
 };

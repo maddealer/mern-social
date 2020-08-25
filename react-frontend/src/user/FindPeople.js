@@ -88,9 +88,14 @@ class FindPeople extends Component {
     return (
       <div className="container">
         <h2 className="mt-5 mb-5">Find People</h2>
-        <div className="alert alert-success">
-          {open && <p>{followMessage}</p>}
-        </div>
+
+        {open && (
+          <div className="alert alert-success">
+            {" "}
+            <p>{followMessage}</p>
+          </div>
+        )}
+
         {this.renderUsers(users)}
       </div>
     );

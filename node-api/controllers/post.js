@@ -18,11 +18,10 @@ const postById = (req, res, next, id) => {
 const getPosts = (req, res) => {
   Post.find()
     .populate("postedBy", "_id name")
-    .select("_id title body")
+    .select("_id title body created")
+    .sort({ created: -1 })
     .then((posts) => {
-      res.status(200).json({
-        posts,
-      });
+      res.status(200).json(posts);
     })
     .catch((err) => {
       console.log(err);

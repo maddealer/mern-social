@@ -4,6 +4,7 @@ import Moment from "react-moment";
 import DefaultPost from "../images/manicure.png";
 import { Link, Redirect } from "react-router-dom";
 import { isAuthenticated } from "./../auth/index";
+import Comment from "./Comment";
 //only icons imports
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart as solidHeart } from "@fortawesome/free-solid-svg-icons";
@@ -20,6 +21,7 @@ export default class Singlepost extends Component {
       redirectToSignin: false,
       like: false,
       likes: 0,
+      comments: [],
     };
   }
 
@@ -44,6 +46,10 @@ export default class Singlepost extends Component {
       }
     });
   }
+
+  updateComments = (comments) => {
+    this.setState({ comments: comments });
+  };
 
   deletePost = () => {
     const postId = this.props.match.params.postId;
@@ -150,7 +156,13 @@ export default class Singlepost extends Component {
   };
 
   render() {
-    const { post, user, redirectToHome, redirectToSignin } = this.state;
+    const {
+      post,
+      user,
+      redirectToHome,
+      redirectToSignin,
+      comments,
+    } = this.state;
 
     if (redirectToHome) {
       return <Redirect to={`/`} />;
@@ -172,6 +184,11 @@ export default class Singlepost extends Component {
                 {post.title}
               </h3>
               {this.renderPost(post, user)}
+              <Comment
+                postId={post._id}
+                comments={comments}
+                updateComments={this.updateComments}
+              />
             </div>
           </div>
         )}

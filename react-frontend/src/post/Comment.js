@@ -39,7 +39,7 @@ class Comment extends Component {
   render() {
     return (
       <div>
-        <h3 className="mt-5 mb-5">Leave a comment</h3>
+        <h3 className="mt-5 mb-5">Leave a comment...</h3>
         <form onSubmit={this.addComment}>
           <div className="form-group">
             <input

@@ -1,32 +1,49 @@
 import React, { Component } from "react";
+import { singlePost, update } from "./apiPost";
 import { isAuthenticated } from "./../auth/index";
-import { create } from "./apiPost";
-import { Redirect } from "react-router-dom";
-import DefaultAvatar from "../images/avatar.png";
+import { Redirect, Link } from "react-router-dom";
 
-class NewPost extends Component {
+class EditPost extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
+      id: "",
       title: "",
       body: "",
       photo: "",
+      redirectToHome: false,
       error: "",
-      user: {},
-      fileSize: 0,
-      loading: false,
-      redirectToProfile: false,
+      photoUrl: "",
     };
   }
 
+  init = (postId) => {
+    // const token = isAuthenticated().token;
+    singlePost(postId).then((data) => {
+      if (data.error) {
+        this.setState({ redirectToProfile: true });
+      } else {
+        console.log(data);
+        this.setState({
+          id: data._id,
+          title: data.title,
+          body: data.body,
+          photoUrl: data.photo,
+        });
+      }
+    });
+  };
+
   componentDidMount() {
     this.postData = new FormData();
-    this.setState({ user: isAuthenticated().user });
+
+    const postId = this.props.match.params.postId;
+    this.init(postId);
   }
 
   isValid = () => {
-    const { title, body, fileSize, photo } = this.state;
+    const { title, body, photo } = this.state;
 
     if (!photo) {
       this.setState({
@@ -47,16 +64,10 @@ class NewPost extends Component {
     this.setState({ error: "" });
     const value = name === "photo" ? event.target.files[0] : event.target.value;
 
-    //const fileSize = name === "photo" ? event.target.files[0].size : 0;
-    // if (fileSize > 1000000) {
-    //   this.setState({ error: "File size should be less then 1MB!" });
-    //   return false;
-    // }
     this.postData.set(name, value);
     this.setState({
       [name]: value,
     });
-    //console.log(fileSize);
   };
 
   clickSubmit = (e) => {
@@ -65,10 +76,10 @@ class NewPost extends Component {
     if (this.isValid()) {
       this.setState({ loading: true });
       //console.log(user);
-      const userId = isAuthenticated().user._id;
+      const postId = this.state.id;
       const token = isAuthenticated().token;
 
-      create(userId, token, this.postData).then((data) => {
+      update(postId, token, this.postData).then((data) => {
         if (data.error) {
           this.setState({ error: data.error, loading: false });
         } else {
@@ -77,19 +88,19 @@ class NewPost extends Component {
             title: "",
             body: "",
             photo: "",
-            redirectToProfile: true,
+            redirectToHome: true,
           });
-          console.log("New Post: ", data);
+          //console.log("New Post: ", data);
         }
       });
     }
   };
 
-  newPostForm = (title, body) => {
+  editPostForm = (title, body) => {
     return (
       <form>
         <div className="form-group">
-          <label className="text-muted">Post Photo</label>
+          <label className="text-muted">New Photo</label>
           <input
             onChange={this.handleChange("photo")}
             type="file"
@@ -116,13 +127,17 @@ class NewPost extends Component {
             value={body}
           />
         </div>
-
-        <button
-          onClick={this.clickSubmit}
-          className="btn btn-raised btn-primary"
-        >
-          Create Post
-        </button>
+        <div className="d-inline-block">
+          <button
+            onClick={this.clickSubmit}
+            className="btn btn-raised btn-primary mr-5"
+          >
+            Update Post
+          </button>
+          <Link className="btn btn-raised btn-info mr-5" to={`/`}>
+            cancel
+          </Link>
+        </div>
       </form>
     );
   };
@@ -131,32 +146,41 @@ class NewPost extends Component {
     const {
       title,
       body,
-      photo,
-      user,
-      redirectToProfile,
+      photoUrl,
+      redirectToHome,
       error,
       loading,
     } = this.state;
-
-    if (redirectToProfile) {
+    if (redirectToHome) {
       return <Redirect to={`/`} />;
     }
-
     return (
       <div className="container">
-        <h2 className="mt-5 mb-5">Create a new post</h2>
-        <div
-          className="alert alert-danger"
-          style={{ display: error ? "" : "none" }}
-        >
-          {error}
-        </div>
-        {loading ? <div className="jumbotron text-center">Loading...</div> : ""}
+        <h2>Edit Post</h2>
 
-        {this.newPostForm(title, body)}
+        {loading ? (
+          <div className="jumbotron text-center">Loading...</div>
+        ) : (
+          <>
+            <h2>{title}</h2>
+            <img
+              src={photoUrl}
+              alt=""
+              className="img-thumbnail mb-3 img-responsive"
+              //style={{ height: "400", width: "100%" }}
+            />
+            <div
+              className="alert alert-danger"
+              style={{ display: error ? "" : "none" }}
+            >
+              {error}
+            </div>
+            {this.editPostForm(title, body)}
+          </>
+        )}
       </div>
     );
   }
 }
 
-export default NewPost;
+export default EditPost;

@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import { list } from "./apiPost";
 import Moment from "react-moment";
-import DefaultAvatar from "../images/avatar.png";
+import DefaultPost from "../images/manicure.png";
 import { Link } from "react-router-dom";
 
 class Posts extends Component {
@@ -27,11 +27,21 @@ class Posts extends Component {
     return (
       <div className="row">
         {posts.map((post, i) => {
+          // console.log("postPhoto ", post);
           const posterId = post.postedBy._id;
           const posterName = post.postedBy.name;
           return (
             <div className="card col-md-4" key={i}>
               <div className="card-body">
+                <img
+                  src={post.photo}
+                  alt={post.title}
+                  onError={(i) => {
+                    i.target.src = `${DefaultPost}`;
+                  }}
+                  className="img-thumbnail mb-3"
+                  style={{ height: "200px", width: "auto" }}
+                />
                 <h5 className="card-title">{post.title}</h5>
                 <p className="card-text">{post.body.substring(0, 15)}...</p>
                 <br />
@@ -40,7 +50,7 @@ class Posts extends Component {
                   <Moment fromNow>{post.created}</Moment>
                 </p>
                 <Link
-                  to={`/posts/${post._id}`}
+                  to={`/post/${post._id}`}
                   className="btn btn-raised btn-primary btn-sn"
                 >
                   Read more.....
@@ -57,7 +67,9 @@ class Posts extends Component {
     const { posts } = this.state;
     return (
       <div className="container">
-        <h2 className="mt-5 mb-5">Recent Posts</h2>
+        <h2 className="mt-5 mb-5">
+          {!posts.length ? "Loading..." : "Recent Posts"}
+        </h2>
         {this.renderPosts(posts)}
       </div>
     );

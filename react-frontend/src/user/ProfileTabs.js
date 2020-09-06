@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import DefaultAvatar from "../images/avatar.png";
+import Moment from "react-moment";
 
 class ProfileTabs extends Component {
   constructor(props) {
@@ -10,7 +11,7 @@ class ProfileTabs extends Component {
   }
 
   render() {
-    const { following, followers } = this.props;
+    const { following, followers, posts } = this.props;
     console.log(this.props);
     return (
       <div>
@@ -32,7 +33,7 @@ class ProfileTabs extends Component {
                       alt={person.name}
                     />
                     <div>
-                      <p className="lead">{person.name}</p>
+                      <p>{person.name}</p>
                       {/* <p className="lead">{JSON.stringify(followers)}</p> */}
                     </div>
                   </Link>
@@ -57,7 +58,7 @@ class ProfileTabs extends Component {
                       alt={person.name}
                     />
                     <div>
-                      <p className="lead">{person.name}</p>
+                      <p>{person.name}</p>
                     </div>
                   </Link>
                 </div>
@@ -67,6 +68,24 @@ class ProfileTabs extends Component {
           <div className="col-md-4">
             <h3 className="text-primary">Posts</h3>
             <hr />
+            <div
+              className="overflow-auto"
+              style={{ height: "150px", overflowY: "scroll" }}
+            >
+              {posts.map((post, i) => (
+                <div key={i}>
+                  <div>
+                    <p className="font-italic mark">
+                      <Link to={`/post/${post._id}`}>
+                        {post.title}{" "}
+                        {/* <p className="lead">{JSON.stringify(followers)}</p> */}
+                      </Link>
+                      <Moment fromNow>{post.created}</Moment>
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>

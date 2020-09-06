@@ -11,6 +11,7 @@ const createPostValidator = (req, res, next) => {
     min: 4,
     max: 150,
   });
+
   //check for errors
   const errors = req.validationErrors();
 

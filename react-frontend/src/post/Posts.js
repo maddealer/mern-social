@@ -5,23 +5,36 @@ import DefaultPost from "../images/manicure.png";
 import { Link } from "react-router-dom";
 
 class Posts extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      posts: [],
-    };
-  }
+  state = {
+    posts: [],
+    page: 1,
+  };
 
   componentDidMount() {
-    list().then((data) => {
+    this.loadPosts(this.state.page);
+  }
+
+  loadPosts = (page) => {
+    list(page).then((data) => {
       if (data.error) {
         console.log(data.error);
       } else {
         this.setState({ posts: data });
       }
     });
-  }
+  };
+
+  loadMore = (number) => {
+    this.setState({ page: this.state.page + number });
+    this.loadPosts(this.state.page + number);
+    window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+  };
+
+  loadLess = (number) => {
+    this.setState({ page: this.state.page - number });
+    this.loadPosts(this.state.page - number);
+    window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+  };
 
   renderPosts = (posts) => {
     return (
@@ -64,13 +77,34 @@ class Posts extends Component {
   };
 
   render() {
-    const { posts } = this.state;
+    const { posts, page } = this.state;
     return (
       <div className="container">
         <h2 className="mt-5 mb-5">
-          {!posts.length ? "Loading..." : "Recent Posts"}
+          {!posts.length ? "No more posts!" : "Recent Posts"}
         </h2>
         {this.renderPosts(posts)}
+        {page > 1 ? (
+          <button
+            className="btn btn-raised btn-warning mr-5 mt-5 mb-5"
+            onClick={() => this.loadLess(1)}
+          >
+            Previous ({page - 1})
+          </button>
+        ) : (
+          ""
+        )}
+
+        {posts.length ? (
+          <button
+            className="btn btn-raised btn-success mt-5 mb-5"
+            onClick={() => this.loadMore(1)}
+          >
+            Next ({page + 1})
+          </button>
+        ) : (
+          ""
+        )}
       </div>
     );
   }

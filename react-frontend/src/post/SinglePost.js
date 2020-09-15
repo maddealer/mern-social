@@ -11,19 +11,15 @@ import { faHeart as solidHeart } from "@fortawesome/free-solid-svg-icons";
 import { faHeart as regularHeart } from "@fortawesome/fontawesome-free-regular";
 
 export default class Singlepost extends Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      post: "",
-      user: {},
-      redirectToHome: false,
-      redirectToSignin: false,
-      like: false,
-      likes: 0,
-      comments: [],
-    };
-  }
+  state = {
+    post: "",
+    user: {},
+    redirectToHome: false,
+    redirectToSignin: false,
+    like: false,
+    likes: 0,
+    comments: [],
+  };
 
   checkLike = (likes) => {
     const userId = isAuthenticated() && isAuthenticated().user._id;
@@ -42,6 +38,7 @@ export default class Singlepost extends Component {
           user: data.postedBy,
           likes: data.likes.length,
           like: this.checkLike(data.likes),
+          comments: data.comments,
         });
       }
     });
@@ -176,7 +173,7 @@ export default class Singlepost extends Component {
           <div className="jumbotron text-center">Loading...</div>
         ) : (
           <div className="row" style={{ alignContent: "center" }}>
-            <div className="col-md-7 offset-md-2">
+            <div className="col-md-8 col-md-offset-4">
               <h3
                 className="display-3 mt-5 mb-5"
                 style={{ alignContent: "center" }}
@@ -186,7 +183,7 @@ export default class Singlepost extends Component {
               {this.renderPost(post, user)}
               <Comment
                 postId={post._id}
-                comments={comments}
+                comments={comments.reverse()}
                 updateComments={this.updateComments}
               />
             </div>

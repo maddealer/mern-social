@@ -195,8 +195,18 @@ class Comment extends Component {
           ))}
           <div>Page {pageNumber} </div>
           <div>
-            <button onClick={this.handlePrev}>prev</button>
-            <button onClick={this.handleNext}>next</button>
+            <button
+              className="btn btn-raised btn-warning mr-5 mt-5 mb-5"
+              onClick={this.handlePrev}
+            >
+              prev
+            </button>
+            <button
+              className="btn btn-raised btn-success mt-5 mb-5"
+              onClick={this.handleNext}
+            >
+              next
+            </button>
           </div>
         </div>
       </div>

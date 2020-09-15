@@ -1,4 +1,7 @@
 const nodeMailer = require("nodemailer");
+// load env
+const dotenv = require("dotenv");
+dotenv.config();
 
 const defaultEmailData = { from: "noreply@node-react.com" };
 
@@ -9,8 +12,8 @@ exports.sendEmail = (emailData) => {
     secure: false,
     requireTLS: true,
     auth: {
-      user: "chicabg.help@gmail.com",
-      pass: "ivozxlnbqfsusxuy",
+      user: `${process.env.EMAIL_SENDER}`,
+      pass: `${process.env.EMAIL_PASS}`,
     },
   });
   return transporter

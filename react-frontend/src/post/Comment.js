@@ -145,20 +145,25 @@ class Comment extends Component {
           {paginatedPosts.map((comment, i) => (
             <div key={i}>
               <div>
-                <Link to={`/user/${comment.postedBy._id}`}>
-                  <img
-                    style={{ borderRadius: "50%", border: "1px solid grey" }}
-                    height="25px"
-                    width="25px"
-                    onError={(i) => (i.target.src = `${DefaultAvatar}`)}
-                    src={`${process.env.REACT_APP_API_URL}/user/photo/${comment.postedBy._id}`}
-                    className="float-left mr-2"
-                    alt={comment.postedBy.name}
-                  />
-                  <div>
-                    <p>{comment.postedBy.name}</p>
-                  </div>
-                </Link>
+                {comment.postedBy ? (
+                  <Link to={`/user/${comment.postedBy._id}`}>
+                    <img
+                      style={{ borderRadius: "50%", border: "1px solid grey" }}
+                      height="25px"
+                      width="25px"
+                      onError={(i) => (i.target.src = `${DefaultAvatar}`)}
+                      src={`${process.env.REACT_APP_API_URL}/user/photo/${comment.postedBy._id}`}
+                      className="float-left mr-2"
+                      alt={comment.postedBy.name}
+                    />
+                    <div>
+                      <p>{comment.postedBy.name}</p>
+                    </div>
+                  </Link>
+                ) : (
+                  <p>Deleted User</p>
+                )}
+
                 <p>{comment.text}</p>
               </div>
 
@@ -170,7 +175,8 @@ class Comment extends Component {
                 <Moment fromNow>{comment.created}</Moment>
 
                 <span>
-                  {isAuthenticated().user &&
+                  {comment.postedBy != null &&
+                    isAuthenticated().user &&
                     isAuthenticated().user._id === comment.postedBy._id && (
                       <>
                         {" "}

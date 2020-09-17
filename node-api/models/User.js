@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+// bring post model on top
+const Post = require("./Post");
 //const uuidv1 = require("uuid/v1");
 const { v1: uuidv1 } = require("uuid");
 const crypto = require("crypto");
@@ -73,5 +75,11 @@ UserSchema.methods = {
     }
   },
 };
+
+// pre middleware
+UserSchema.pre("remove", function (next) {
+  Post.remove({ postedBy: this._id }).exec();
+  next();
+});
 
 module.exports = mongoose.model("User", UserSchema);
